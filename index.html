@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Free eBook Finder</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at top left,#263b68 0,#101827 35%,#070b13 100%);
+    color:#fff;
+    min-height:100vh;
+}
+
+.container{
+    width:min(1100px,94%);
+    margin:auto;
+}
+
+/* HEADER */
+
+header{
+    padding:55px 0 30px;
+    text-align:center;
+}
+
+.logo{
+    width:75px;
+    height:75px;
+    margin:auto;
+    border-radius:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:38px;
+    background:rgba(255,255,255,.12);
+    backdrop-filter:blur(15px);
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+}
+
+h1{
+    margin:20px 0 10px;
+    font-size:clamp(32px,6vw,58px);
+}
+
+.subtitle{
+    color:#c7d0df;
+    font-size:17px;
+    max-width:650px;
+    margin:auto;
+    line-height:1.6;
+}
+
+/* SEARCH */
+
+.search-area{
+    margin:35px auto 25px;
+    max-width:800px;
+}
+
+.search-box{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px;
+    border-radius:20px;
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.18);
+    backdrop-filter:blur(20px);
+}
+
+#searchInput{
+    flex:1;
+    min-width:0;
+    border:none;
+    outline:none;
+    background:transparent;
+    color:white;
+    font-size:17px;
+    padding:16px;
+}
+
+#searchInput::placeholder{
+    color:#aeb8c8;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.search-btn{
+    padding:15px 22px;
+    border-radius:14px;
+    background:white;
+    color:#101827;
+    font-weight:bold;
+    font-size:15px;
+}
+
+.search-btn:hover{
+    transform:translateY(-2px);
+}
+
+.mic-btn{
+    width:52px;
+    height:52px;
+    border-radius:15px;
+    background:#1d2940;
+    color:white;
+    font-size:23px;
+}
+
+.mic-btn:hover{
+    background:#2a3a58;
+}
+
+.mic-btn.listening{
+    animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+    0%{
+        box-shadow:0 0 0 0 rgba(255,255,255,.5);
+    }
+    70%{
+        box-shadow:0 0 0 16px rgba(255,255,255,0);
+    }
+    100%{
+        box-shadow:0 0 0 0 rgba(255,255,255,0);
+    }
+}
+
+/* QUICK SEARCH */
+
+.quick{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:9px;
+    margin:20px 0;
+}
+
+.quick button{
+    background:rgba(255,255,255,.09);
+    color:#e8edf5;
+    padding:9px 15px;
+    border-radius:30px;
+    border:1px solid rgba(255,255,255,.12);
+}
+
+.quick button:hover{
+    background:rgba(255,255,255,.18);
+}
+
+/* STATUS */
+
+.status{
+    text-align:center;
+    color:#aeb8c8;
+    min-height:30px;
+    margin:25px 0;
+}
+
+/* RESULTS */
+
+.results{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:22px;
+    padding-bottom:50px;
+}
+
+.book{
+    background:rgba(255,255,255,.085);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:22px;
+    overflow:hidden;
+    backdrop-filter:blur(15px);
+    transition:.25s;
+}
+
+.book:hover{
+    transform:translateY(-6px);
+    box-shadow:0 20px 45px rgba(0,0,0,.3);
+}
+
+.cover{
+    width:100%;
+    height:300px;
+    background:#141d2d;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+}
+
+.cover img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.no-cover{
+    font-size:65px;
+}
+
+.book-content{
+    padding:20px;
+}
+
+.book-title{
+    font-size:20px;
+    font-weight:bold;
+    line-height:1.35;
+    margin-bottom:9px;
+}
+
+.author{
+    color:#c5cedc;
+    margin-bottom:8px;
+}
+
+.year{
+    color:#9da9ba;
+    font-size:14px;
+}
+
+.badge{
+    display:inline-block;
+    margin-top:13px;
+    padding:6px 10px;
+    border-radius:20px;
+    background:rgba(90,220,140,.12);
+    color:#8ff0ae;
+    font-size:12px;
+    border:1px solid rgba(90,220,140,.2);
+}
+
+.actions{
+    display:flex;
+    gap:9px;
+    margin-top:18px;
+}
+
+.read-btn,
+.source-btn{
+    flex:1;
+    text-align:center;
+    text-decoration:none;
+    padding:12px 8px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:bold;
+}
+
+.read-btn{
+    background:white;
+    color:#111827;
+}
+
+.source-btn{
+    background:rgba(255,255,255,.09);
+    color:white;
+    border:1px solid rgba(255,255,255,.12);
+}
+
+/* EMPTY */
+
+.empty{
+    text-align:center;
+    padding:70px 20px;
+    color:#aeb8c8;
+}
+
+.empty-icon{
+    font-size:65px;
+    margin-bottom:15px;
+}
+
+/* FOOTER */
+
+footer{
+    border-top:1px solid rgba(255,255,255,.1);
+    text-align:center;
+    padding:25px 10px;
+    color:#8e9bad;
+    font-size:13px;
+    line-height:1.6;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    header{
+        padding-top:35px;
+    }
+
+    .search-box{
+        flex-wrap:wrap;
+    }
+
+    #searchInput{
+        width:calc(100% - 65px);
+        order:1;
+    }
+
+    .mic-btn{
+        order:2;
+    }
+
+    .search-btn{
+        width:100%;
+        order:3;
+    }
+
+    .cover{
+        height:330px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="container">
+
+<header>
+
+    <div class="logo">📚</div>
+
+    <h1>Free eBook Finder</h1>
+
+    <p class="subtitle">
+        Search for books, authors and subjects and discover
+        legally readable free eBooks.
+    </p>
+
+</header>
+
+
+<section class="search-area">
+
+    <div class="search-box">
+
+        <input
+            id="searchInput"
+            type="text"
+            placeholder="Search book, author or subject..."
+            autocomplete="off"
+        >
+
+        <button
+            class="mic-btn"
+            id="micBtn"
+            title="Voice Search"
+            onclick="startVoiceSearch()">
+            🎙️
+        </button>
+
+        <button
+            class="search-btn"
+            onclick="searchBooks()">
+            🔍 Search
+        </button>
+
+    </div>
+
+
+    <div class="quick">
+
+        <button onclick="quickSearch('Premchand')">
+            Premchand
+        </button>
+
+        <button onclick="quickSearch('William Shakespeare')">
+            Shakespeare
+        </button>
+
+        <button onclick="quickSearch('Hindi literature')">
+            Hindi Literature
+        </button>
+
+        <button onclick="quickSearch('History')">
+            History
+        </button>
+
+        <button onclick="quickSearch('Computer Science')">
+            Computer Science
+        </button>
+
+        <button onclick="quickSearch('Children')">
+            Children Books
+        </button>
+
+    </div>
+
+</section>
+
+
+<div class="status" id="status"></div>
+
+
+<section id="results" class="results">
+
+    <div class="empty">
+
+        <div class="empty-icon">📖</div>
+
+        <h2>Find your next book</h2>
+
+        <p>
+            Search by title, author or subject.
+        </p>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<footer>
+
+    Free eBook Finder<br>
+
+    Book information powered by
+    <a
+       href="https://openlibrary.org/"
+       target="_blank"
+       style="color:white;">
+       Open Library
+    </a>
+
+    <br>
+
+    Only publicly readable ebook results are shown.
+
+</footer>
+
+
+
+<script>
+
+/* =========================================
+   CONFIGURATION
+========================================= */
+
+const API =
+    "https://openlibrary.org/search.json";
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const results =
+    document.getElementById("results");
+
+const statusBox =
+    document.getElementById("status");
+
+const micBtn =
+    document.getElementById("micBtn");
+
+
+/* =========================================
+   ENTER KEY
+========================================= */
+
+searchInput.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+            searchBooks();
+        }
+
+    }
+);
+
+
+/* =========================================
+   QUICK SEARCH
+========================================= */
+
+function quickSearch(value){
+
+    searchInput.value = value;
+
+    searchBooks();
+
+}
+
+
+/* =========================================
+   SEARCH BOOKS
+========================================= */
+
+async function searchBooks(){
+
+    const query =
+        searchInput.value.trim();
+
+    if(!query){
+
+        statusBox.textContent =
+            "Please enter a book, author or subject.";
+
+        return;
+    }
+
+
+    statusBox.textContent =
+        "🔎 Searching free readable eBooks...";
+
+    results.innerHTML = "";
+
+
+    try{
+
+        const url =
+            API +
+            "?q=" +
+            encodeURIComponent(query) +
+            "&ebook_access:public" +
+            "&fields=key,title,author_name,first_publish_year,cover_i,ebook_access,language,edition_key" +
+            "&limit=30";
+
+
+        const response =
+            await fetch(url);
+
+
+        if(!response.ok){
+
+            throw new Error(
+                "Search failed"
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        let books =
+            data.docs || [];
+
+
+        /*
+           Extra safety:
+           Only show records that Open Library
+           identifies as publicly accessible ebooks.
+        */
+
+        books =
+            books.filter(function(book){
+
+                return book.ebook_access === "public";
+
+            });
+
+
+        if(books.length === 0){
+
+            statusBox.textContent =
+                "No publicly readable free eBook found.";
+
+            results.innerHTML = `
+                <div class="empty">
+                    <div class="empty-icon">🔎</div>
+                    <h2>No free readable book found</h2>
+                    <p>
+                        Try another title, author or subject.
+                    </p>
+                </div>
+            `;
+
+            return;
+
+        }
+
+
+        statusBox.textContent =
+            books.length +
+            " free readable result(s) found.";
+
+
+        books.forEach(function(book){
+
+            createBookCard(book);
+
+        });
+
+
+    }catch(error){
+
+        console.error(error);
+
+        statusBox.textContent =
+            "Unable to search right now.";
+
+        results.innerHTML = `
+            <div class="empty">
+
+                <div class="empty-icon">⚠️</div>
+
+                <h2>Search temporarily unavailable</h2>
+
+                <p>
+                    Please check your internet connection
+                    and try again.
+                </p>
+
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =========================================
+   CREATE BOOK CARD
+========================================= */
+
+function createBookCard(book){
+
+    const title =
+        book.title || "Unknown Title";
+
+
+    const author =
+        book.author_name &&
+        book.author_name.length
+        ? book.author_name.slice(0,2).join(", ")
+        : "Unknown Author";
+
+
+    const year =
+        book.first_publish_year || "";
+
+
+    let cover =
+        "";
+
+    if(book.cover_i){
+
+        cover =
+            "https://covers.openlibrary.org/b/id/" +
+            book.cover_i +
+            "-L.jpg";
+
+    }
+
+
+    /*
+       Work page is the safest source link.
+
+       The Open Library result is known to have
+       public ebook access because we filtered
+       ebook_access === "public".
+    */
+
+    let workId =
+        book.key || "";
+
+
+    if(workId.startsWith("/works/")){
+
+        workId =
+            workId.replace("/works/","");
+
+    }
+
+
+    const openLibraryUrl =
+        "https://openlibrary.org/works/" +
+        encodeURIComponent(workId);
+
+
+    const card =
+        document.createElement("article");
+
+    card.className =
+        "book";
+
+
+    card.innerHTML = `
+
+        <div class="cover">
+
+            ${
+                cover
+
+                ?
+
+                `<img
+                    src="${cover}"
+                    alt="${escapeHTML(title)}"
+                    loading="lazy"
+                    onerror="this.parentElement.innerHTML='<div class=&quot;no-cover&quot;>📖</div>';"
+                >`
+
+                :
+
+                `<div class="no-cover">
+                    📖
+                </div>`
+            }
+
+        </div>
+
+
+        <div class="book-content">
+
+            <div class="book-title">
+                ${escapeHTML(title)}
+            </div>
+
+
+            <div class="author">
+                ✍️ ${escapeHTML(author)}
+            </div>
+
+
+            ${
+                year
+
+                ?
+
+                `<div class="year">
+                    📅 First published: ${year}
+                </div>`
+
+                :
+
+                ""
+            }
+
+
+            <div class="badge">
+                ✓ Publicly readable
+            </div>
+
+
+            <div class="actions">
+
+                <a
+                    class="read-btn"
+                    href="${openLibraryUrl}"
+                    target="_blank"
+                    rel="noopener noreferrer">
+
+                    📖 Read Online
+
+                </a>
+
+
+                <a
+                    class="source-btn"
+                    href="${openLibraryUrl}"
+                    target="_blank"
+                    rel="noopener noreferrer">
+
+                    🌐 Source
+
+                </a>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    results.appendChild(card);
+
+}
+
+
+/* =========================================
+   HTML ESCAPE
+========================================= */
+
+function escapeHTML(value){
+
+    return String(value)
+
+        .replace(/&/g,"&amp;")
+
+        .replace(/</g,"&lt;")
+
+        .replace(/>/g,"&gt;")
+
+        .replace(/"/g,"&quot;")
+
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================================
+   VOICE SEARCH
+========================================= */
+
+function startVoiceSearch(){
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+
+    if(!SpeechRecognition){
+
+        alert(
+            "Voice search is not supported in this browser. Please use Google Chrome or Microsoft Edge."
+        );
+
+        return;
+
+    }
+
+
+    const recognition =
+        new SpeechRecognition();
+
+
+    recognition.lang =
+        "en-IN";
+
+
+    recognition.continuous =
+        false;
+
+
+    recognition.interimResults =
+        false;
+
+
+    recognition.maxAlternatives =
+        1;
+
+
+    micBtn.classList.add(
+        "listening"
+    );
+
+
+    statusBox.textContent =
+        "🎙️ Listening... Please speak now.";
+
+
+    recognition.start();
+
+
+    recognition.onresult =
+        function(event){
+
+            const text =
+                event.results[0][0].transcript;
+
+
+            searchInput.value =
+                text;
+
+
+            statusBox.textContent =
+                "🎙️ You said: " + text;
+
+
+            searchBooks();
+
+        };
+
+
+    recognition.onerror =
+        function(event){
+
+            console.log(
+                "Voice error:",
+                event.error
+            );
+
+
+            statusBox.textContent =
+                "Voice search could not be completed.";
+
+        };
+
+
+    recognition.onend =
+        function(){
+
+            micBtn.classList.remove(
+                "listening"
+            );
+
+        };
+
+}
+
+</script>
+
+</body>
+</html>
